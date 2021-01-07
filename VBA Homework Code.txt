@@ -1,0 +1,185 @@
+Sub Stock2():
+' loop through all worksheets
+'assume that all ticker symbols are sort if not sort by ticker and date
+'Create Summary Table
+
+' identify when ticker changes
+
+
+'work out Yearly change
+'work out Percentate Change
+'sum total stock volume
+'rowCounter
+'reset opening value
+
+
+
+Dim SummaryTableRow As Double
+Dim Ticker As String
+Dim OpeningValue As Double
+Dim ClosingValue As Double
+Dim TotalStockValue As Double
+Dim RowCounter As Double
+Dim YearlyChange As Double
+Dim PercentageChange As Double
+Dim TickerHeader As String
+Dim YearlyChangeHeader As String
+Dim PercentageHeader As String
+Dim TotalStockVolumeHeader As String
+Dim LastRow As Double
+Dim ws As Worksheet
+Dim IncreaseHeader As String
+Dim DecreaseHeader As String
+Dim GreatestTotal As String
+Dim GreatestIncrease As Double
+Dim GreatestDecrease As Double
+Dim GreatestVolume As Double
+Dim TickerA As String
+Dim Value As String
+
+
+
+
+' loop through all worksheets
+  For Each ws In worksheets
+    ws.Activate
+
+' Set Header Row
+        TickerHeader = "Ticker"
+        YearlyChangeHeader = "Yearly Change"
+        PercentageHeader = "Percentage Change"
+        TotalStockVolumeHeader = "Total Stock Volume"
+        IncreaseHeader = "Greatest % Increase"
+        DecreaseHeader = "Greatest % Decrease"
+        GreatestTotal = "Greatest Total Volume"
+        TickerA = "Ticker"
+        Value = "Value"
+        
+        Range("I1").Value = TickerHeader
+        Range("J1").Value = YearlyChangeHeader
+        Range("K1").Value = PercentageHeader
+        Range("L1").Value = TotalStockVolumeHeader
+        Range("O2").Value = IncreaseHeader
+        Range("O3").Value = DecreaseHeader
+        Range("O4").Value = GreatestTotal
+        Range("P1").Value = TickerA
+        Range("Q1").Value = Value
+        
+        
+        ' WorksheetName = ws.Name
+
+
+        SummaryTableRow = 2
+
+    'Start TotalStockValue at 0
+        TotalStockValue = 0
+
+'set openvalue
+
+    OpeningValue = Cells(2, 3).Value
+
+'define loops - use the end row code
+' create For Loop
+' Find last row
+        ' LastRow = ws.Range("A", Rows.Count).End(xlUp).Row
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+  
+    For i = 2 To LastRow
+        
+        'Sum Total Stock Value
+            TotalStockValue = Cells(i, 7).Value + TotalStockValue
+        
+        
+        If Cells(i + 1, 1).Value <> Cells(i, 1) Then
+                
+                'Set the Ticker Name
+                              
+                    Ticker = Cells(i, 1).Value
+                               
+                               
+                'Set Closing value work out Yearly Change and 5 Change
+                
+                    ClosingValue = Cells(i, 6).Value
+                    
+                    YearlyChange = ClosingValue - OpeningValue
+                    
+                    PercentageChange = YearlyChange / OpeningValue
+                
+                'Add Ticker Name YearlyChange and %change and Total Stock Volume to Summary table
+                               
+                     Range("I" & SummaryTableRow).Value = Ticker
+                     Range("J" & SummaryTableRow).Value = YearlyChange
+                     Range("K" & SummaryTableRow).Value = PercentageChange
+                     Range("L" & SummaryTableRow).Value = TotalStockValue
+                     
+'                     Range("O" & SummaryTableRow).Value = OpeningValue
+'                     Range("P" & SummaryTableRow).Value = ClosingValue
+                     
+                
+                'Reset OpeningValue and TotalStockVolue
+                    OpeningValue = Cells(i + 1, 3).Value
+                    TotalStockValue = 0
+                'Add 1 to SummaryTableRow
+                    SummaryTableRow = SummaryTableRow + 1
+         Else
+                
+        End If
+
+    
+    Next i
+ ' Set colours in yearly Change
+
+'  Find last row in column k
+    LastRow_K = ws.Cells(Rows.Count, 10).End(xlUp).Row
+'  Create Loop
+    For a = 2 To LastRow_K
+    
+' if statement
+        If Cells(a, 10).Value < 0 Then
+            Cells(a, 10).Interior.ColorIndex = 3
+        Else
+            Cells(a, 10).Interior.ColorIndex = 4
+        End If
+    Next a
+
+' Challenge
+    'Use LastRow_K
+        GreatestIncrease = Range("K2").Value
+        GreatestDecrease = Range("K2").Value
+        GreatestVolume = Range("L2").Value
+
+    'Create Loop
+     For c = 2 To LastRow_K
+     'If statements
+        If Cells(c, 11).Value >= GreatestIncrease Then
+            GreatestIncrease = Cells(c, 11).Value
+            Range("Q2").Value = GreatestIncrease
+            Range("P2").Value = Cells(c, 9)
+'        Else
+'            Range("Q2").Value = GreatestIncrease
+            
+        End If
+        
+        If Cells(c, 11).Value <= GreatestDecrease Then
+            GreatestDecrease = Cells(c, 11).Value
+            Range("Q3").Value = GreatestDecrease
+            Range("P3").Value = Cells(c, 9)
+'        Else
+'           Range("Q3").Value = GreatestDecrease
+        
+        End If
+        
+        If Cells(c, 12).Value >= GreatestVolume Then
+            GreatestVolume = Cells(c, 12).Value
+            Range("Q4").Value = GreatestVolume
+            Range("P4").Value = Cells(c, 9)
+'    Elsc
+'           Range("Q4").Value = GreatestVolume
+           
+        End If
+    Next c
+         
+
+ 
+ Next ws
+End Sub
